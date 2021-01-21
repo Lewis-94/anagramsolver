@@ -30,5 +30,5 @@ def test_word_combo_generation():
     assert word_combos == actual_word_combos
 
 if __name__ == "__main__":
-    
+
     test_word_combo_generation()

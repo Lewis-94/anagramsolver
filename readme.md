@@ -4,8 +4,8 @@ This python package provides a CLI programme to generate anagrams given a words 
 words, and then compares the generated anagrams against a list of user provided hashes
 
 ## Setup
-This python package uses python 3.7. A yml file has been provided which can be used to build the environment required to run
-anagramsolver.py
+This python package uses python 3.7. the file `anagramcracker.yml`  as been provided which can be used to build the 
+conda environment required to run anagramsolver.py
 
 ## Running
 To run this package, please enter the following command:
