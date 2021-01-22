@@ -56,7 +56,6 @@ class AnagramSolver(object):
     def filter_base_words(self, only_real_words=False):
         """ function to remove the words in the words list that are possible with this anagram"""
 
-
         self.set_details()
         # remove words that have unallowed characters
         rm_bad_words = np.vectorize(self._contains_allowed_chars)
@@ -76,9 +75,9 @@ class AnagramSolver(object):
         print(f"number of words (after removal of apostrophies and duplicates) = {self.words.shape[0]}")
 
         # remove words that are not compatible with other words
-        #rm_uncompatible_words = np.vectorize(self.compatible_with_other_words)
-        #self.words = self.words[rm_uncompatible_words(self.words)]
-        #print(f"number of words after removing words incompatible with all other words = {self.words.shape[0]}")
+        # rm_uncompatible_words = np.vectorize(self.compatible_with_other_words)
+        # self.words = self.words[rm_uncompatible_words(self.words)]
+        # print(f"number of words after removing words incompatible with all other words = {self.words.shape[0]}")
 
         self.set_details()
 
@@ -100,7 +99,6 @@ class AnagramSolver(object):
         # warning this is a recursive function and may take a long time to process
         self._generate_anagrams(self.words_np, self.anagram_np, np.array(range(self.words_np.shape[0])), no_words)
 
-
     def _word_combo_to_anagrams(self, word_list):
         """ convert a word combination to a list of anagrams, and check against hashes
 
@@ -112,11 +110,11 @@ class AnagramSolver(object):
         perms = permutations(word_list)
         # for each permutation, create md5 hash string, compare against provided hashes and print if there is a match
         for perm in perms:
-            anagram = " ".join(perm).encode('utf-8')
-            hash_str = hashlib.md5(anagram).hexdigest()
+            gram = " ".join(perm).encode('utf-8')
+            hash_str = hashlib.md5(gram).hexdigest()
             if hash_str in self.hashes:
                 idx = self.hashes.index(hash_str)
-                print(f"Correct match found for hash {self.hashes[idx]}!: {anagram}")
+                print(f"Correct match found for hash {self.hashes[idx]}!: {gram}")
 
     def _generate_anagrams(self, words_np, anagram_np, indices, remaining_word_count, firstlevel=True):
         """ Generates all the anagrams of a specified number of words and checks them against hashes
@@ -145,7 +143,7 @@ class AnagramSolver(object):
         else:
             iterator = zip(indices, words_np)
 
-        all_word_combos = deque() # quicker than using lists
+        all_word_combos = deque()  # quicker than using lists
 
         for (j, (i, word)) in enumerate(iterator):
 
@@ -154,7 +152,8 @@ class AnagramSolver(object):
             words_np = words_np[1:, :]
             indices = indices[1:]
             # get updated numpy arrays with current word removed
-            new_anagram_np, remaining_words_np, remaining_indices = self._remove_word(anagram_np, word, words_np, indices)
+            new_anagram_np, remaining_words_np, remaining_indices = self._remove_word(anagram_np, word, words_np,
+                                                                                      indices)
 
             # we have found an anagram in less words than the max amount of words specified
             if new_anagram_np.sum() == 0:
@@ -185,12 +184,13 @@ class AnagramSolver(object):
             # against the hashes provided. remove the word cominations from deque so that it doesnt grow too large.
             if firstlevel:
                 while len(all_word_combos) > 0:
-                    val = list(map(lambda i: self.words[i], all_word_combos.pop()))
+                    val = list(map(lambda idx: self.words[idx], all_word_combos.pop()))
                     self._word_combo_to_anagrams(val)
 
         return all_word_combos
 
-    def _remove_word(self, anagram_np, word, words_np, indices):
+    @staticmethod
+    def _remove_word(anagram_np, word, words_np, indices):
         """ given a word, it removes any words that can not form an anagram of anagram_pd with this word
 
         :param anagram_np: numpy array of anagram, where columns represent each character and values represent count
@@ -243,7 +243,6 @@ class AnagramSolver(object):
         else:
             return True
 
-
     @staticmethod
     def _keep_real_words(words, dict_type="en_GB"):
         """ keep only words found in dictionary
@@ -256,11 +255,10 @@ class AnagramSolver(object):
         real_words_mask = check_word(words)
         return words[real_words_mask]
 
-
     @staticmethod
     def _remove_apostrophe(word):
         """ Remove apostrophe from word """
-        return word.replace("'","")
+        return word.replace("'", "")
 
     def _contains_allowed_chars(self, word):
         """ check if word contains allowed characters"""
@@ -302,4 +300,3 @@ if __name__ == "__main__":
 
     # this will find all anagrams with up to 'max_words' words
     anagram_solver.generate_anagrams(max_words)
-
