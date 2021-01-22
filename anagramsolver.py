@@ -46,7 +46,7 @@ class AnagramSolver(object):
         for idx, word in enumerate(self.words):
             pd_list.append(pd.DataFrame(Counter(word), index=[idx], dtype=int))
         words_pd = pd.concat(pd_list)
-        # get a numpy array with column for each letter e.g. where value is count of that letter. e.g
+        # get a numpy array with column for each letter where value is count of that letter. e.g
         #        A  B  C  D
         # A:     1  0  0  0
         # AB:    1  1  0  0
@@ -127,11 +127,15 @@ class AnagramSolver(object):
         call the function then finds if any words match the remaining letters to produce a word combination that can
         create anagrams.
 
-        :param allowed_words: a numpy array of allowed words
-        :param char_counter: a collections.counter object of the anagram
-        :param remaining_word_count: The number of words to process to make an anagram with
-        :param firstlevel: whether this is the highest level of the function call
-        :return: Nothing
+        :param words_np: a numpy array of allowed words where column is letter, value is count of letter for each word
+        :param anagram_np: a numpy array of allowed words where column is letter, value is count of letter for each word
+        :param indices: a numpy array of the indices associated with the words in words_np. typically when this function
+                        is initially called, this will be a range from 0 to words_np.shape[0]
+        :param remaining_word_count: The maximum number of words to make an anagram with. if this function has been
+                                     called recursively then this is the remaining number of words to find for anagram.
+        :param firstlevel: Whether this is the highest level of the function call
+        :return: all_word_combos, if firstlevel=true, all_word_combos will be an empty deque, otherwise it will be a
+                                  deque of word indices that make an anagram i.e. [[1,2,3], [20,34,45],...]
 
         """
         # create iterator with tqdm if first level
@@ -194,7 +198,9 @@ class AnagramSolver(object):
         :param words_np:    numpy array of words list, where columns represent each character, rows for each word and
                             values represent count
         :param indices:     numpy array of indices in global words lists associated with words_pd
-        :return:
+        :return: new_anagram_pd:        updated anagram_np with word removed
+                 remaining_words_np:    updated words_np with remaining words after using word
+                 indices:               updated indices associated with remaining words after using word
         """
         # this is the remaining character counts after removing word from anagram_pd
         new_anagram_pd = anagram_np - word
@@ -206,15 +212,14 @@ class AnagramSolver(object):
         # if any value in row = False, then word has too many characters of one type. min of [true, false] is false
         mask2 = mask.min(axis=1)
         # filter down to list of remaining allowable words and associated indices of these words
-        remaining_words_pd = words_np[mask2]
+        remaining_words_np = words_np[mask2]
         indices = indices[mask2]
-        return new_anagram_pd, remaining_words_pd, indices
+        return new_anagram_pd, remaining_words_np, indices
 
     def compatible_with_other_words(self, word):
         """ checks a word is not compatible with any other words.
 
         :param word: str, word to check
-        :param return_words:
         :return: Bool, True is word is compatible with others, False if not
         """
         word_counter = Counter(word)
@@ -295,6 +300,6 @@ if __name__ == "__main__":
 
     anagram_solver = AnagramSolver(words_file, anagram, hashes)
 
-    # this will find all anagrams up to 4 words long
+    # this will find all anagrams with up to 'max_words' words
     anagram_solver.generate_anagrams(max_words)
 
