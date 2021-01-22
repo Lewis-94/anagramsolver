@@ -14,9 +14,12 @@ To run this package, please enter the following command:
 
 where:
 - `word_list.txt` is a text file containing the words to use in the anagram generation. Note that this should only 
-include one word per line.
+include one word per line. A file called 'wordlist.txt' has been provided as part of this tool
 - `hashes.txt` is a text file containing the MD5 hashes to assess the anagrams against. Note that this should only 
-include one hash per line.
+include one hash per line. An example called 'hashes.txt' has been provided which provides the following hashes
+    - 23170acc097c24edb98fc5488ab033fe: 'ty outlaws printouts'
+    - e4820b45d2277f3844eac66c903e84be: 'printout stout yawls'
+    - 665e5bcb0c20062fe8abaaf4628bb154: 'wu lisp not statutory'
 - `anagram` is a string that you would like to generate anagrams for
 - `max number of words` is an integer defining the maximum number of words that an anagram can consist of. as the number 
 of words goes up, the number of word combinations and thus anagrams increases significantly. all anagrams with less words 
